@@ -10,10 +10,15 @@ package com.satish.android.newsapp.ui.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.satish.android.networktest.model.NewsItemModel
+import com.satish.android.newsapp.R
+import com.satish.android.newsapp.app.NewsApplication
 import com.satish.android.newsapp.network.GenericResponse
 import com.satish.android.newsapp.network.RetrofitCallback
+import com.satish.android.newsapp.repo.TopHeadingRepository
 import com.satish.android.newsapp.utility.Constants
 import com.satish.android.newsapp.utility.retroServices
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 class TopHeadingVM : ViewModel() {
 
@@ -31,11 +36,37 @@ class TopHeadingVM : ViewModel() {
                 override fun onSuccess(response: GenericResponse<ArrayList<NewsItemModel>>) {
                     newsData.value = response.data
                     totalResults.value = response.totalResults
+                    if (page == 0) clearNewsDataAndInsert(response.data)
+                    else
+                        insertNewsIntoDb(response.data)
                 }
 
                 override fun onFail(response: GenericResponse<*>) {
                     errorMsg.value = response.message
                 }
             })
+    }
+
+    private fun insertNewsIntoDb(newsList: ArrayList<NewsItemModel>?) {
+        launch {
+            TopHeadingRepository.instance.insertNewsListIntoDb(newsList)
+        }
+    }
+
+    fun getNewsDataFromDb() {
+        launch {
+            val newsList = TopHeadingRepository.instance.getNewsListFromDb()
+            if (newsList == null || newsList.isEmpty())
+                errorMsg.postValue(NewsApplication.instance.getString(R.string.no_internet))
+            else
+                newsData.postValue(newsList)
+        }
+    }
+
+    fun clearNewsDataAndInsert(newsList: ArrayList<NewsItemModel>?) {
+        launch {
+            TopHeadingRepository.instance.clearNewsDb()
+            TopHeadingRepository.instance.insertNewsListIntoDb(newsList)
+        }
     }
 }

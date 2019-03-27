@@ -8,8 +8,11 @@ package com.satish.android.newsapp.app
  * **/
 
 import android.support.multidex.MultiDexApplication
+import com.satish.android.newsapp.db.AppDatabase
 
 class NewsApplication : MultiDexApplication() {
+
+    val appDatabase by lazy { AppDatabase.get(this) }
 
     override fun onCreate() {
         super.onCreate()

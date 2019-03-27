@@ -66,13 +66,10 @@ class TopHeadingActivity : BaseActivity() {
                     adapter?.addData(it)
             }
         })
-
         if (isNetworkAvailable)
             topHeadingVM.topHeadingCallAPI(0)
         else {
-            binding.errorLay.errorTv.visibility = View.VISIBLE
-            binding.errorLay.errorTv.text = getString(R.string.no_internet)
-            toast(getString(R.string.no_internet))
+            topHeadingVM.getNewsDataFromDb()
         }
         binding.swipeToRefresh.setOnRefreshListener {
             fadeIn(binding.loadingLay.loadingTv)
@@ -91,7 +88,7 @@ class TopHeadingActivity : BaseActivity() {
     }
 
     private fun handleNoResult() {
-        if(page!=0) {
+        if (page != 0) {
             toast(getString(R.string.no_more_result))
             return
         }
