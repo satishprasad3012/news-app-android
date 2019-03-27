@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="data"
+                type="com.satish.android.newsapp.ui.viewmodel.NewsItemBinder"/>
+
+    </data>
+
+    <android.support.v7.widget.CardView
+            android:id="@+id/top_heading_item_cv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/d8"
+            android:layout_marginStart="@dimen/d8"
+            android:layout_marginEnd="@dimen/d8"
+            android:layout_marginBottom="0dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/d6"
+            app:cardElevation="@dimen/d2">
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{data.onItemClick()}"
+                android:clickable="true"
+                android:paddingBottom="@dimen/d12">
+
+            <ImageView
+                    android:id="@+id/banner_iv"
+                    android:layout_width="match_parent"
+                    android:background="@color/colorAccent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:imageUrl="@{data.urlToImage}"
+                    android:layout_height="@dimen/d200"/>
+
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:background="@color/overlay"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_height="@dimen/d200"/>
+            <TextView
+                    android:id="@+id/news_heading_tv"
+                    style="@style/HeadingTxtStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="3"
+                    android:text="@{data.title}"
+                    android:ellipsize="end"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_margin="@dimen/d8"
+                    tools:text="kjdhjkfgjhfgfhjgfhjgvhjf dnvdnfngf vfgvfnfvnfv fhvfnvfhfvnhfvjhfgvj"/>
+
+            <TextView
+                    android:id="@+id/desc_tv"
+                    style="@style/DescTxtStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{data.description}"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textSize="@dimen/f14"
+                    android:textColor="@color/text_color_1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/banner_iv"
+                    tools:text="kjdhjkfgjhfgfhjgfhjgvhjf dnvdnfngf vfgvfnfvnfv fhvfnvfhfvnhfvjhfgvj"/>
+
+            <TextView
+                    android:id="@+id/content_tv"
+                    style="@style/DescTxtStyle"
+                    android:text="@{data.content}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="6"
+                    android:ellipsize="end"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/desc_tv"
+                    tools:text="kjdhjkfgjhfgfhjgfhjgvhjf dnvdnfngf vfgvfnfvnfv fhvfnvfhfvnhfvjhfgvj"/>
+
+            <TextView
+                    android:id="@+id/date_tv"
+                    style="@style/SmallDescTxtStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{data.publishedAt}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/content_tv"
+                    tools:text="5 days ago"/>
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+</layout>
