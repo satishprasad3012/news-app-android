@@ -16,6 +16,7 @@ import com.satish.android.newsapp.network.GenericResponse
 import com.satish.android.newsapp.network.RetrofitCallback
 import com.satish.android.newsapp.repo.TopHeadingRepository
 import com.satish.android.newsapp.utility.Constants
+import com.satish.android.newsapp.utility.isNetworkAvailable
 import com.satish.android.newsapp.utility.retroServices
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -30,21 +31,26 @@ class TopHeadingVM : ViewModel() {
         page: Int, country: String = Constants.DEFUALT_COUNTRY,
         pageSize: Int = Constants.RV_PAGE_SIZE
     ) {
-        retroServices().getTopHeadlines(country, pageSize, page)
-            .enqueue(object : RetrofitCallback<GenericResponse<ArrayList<NewsItemModel>>>() {
+        if (!isNetworkAvailable) {
+            if (page == 0)
+                getNewsDataFromDb()
+        } else {
+            retroServices().getTopHeadlines(country, pageSize, page)
+                .enqueue(object : RetrofitCallback<GenericResponse<ArrayList<NewsItemModel>>>() {
 
-                override fun onSuccess(response: GenericResponse<ArrayList<NewsItemModel>>) {
-                    newsData.value = response.data
-                    totalResults.value = response.totalResults
-                    if (page == 0) clearNewsDataAndInsert(response.data)
-                    else
-                        insertNewsIntoDb(response.data)
-                }
+                    override fun onSuccess(response: GenericResponse<ArrayList<NewsItemModel>>) {
+                        newsData.value = response.data
+                        totalResults.value = response.totalResults
+                        if (page == 0) clearNewsDataAndInsert(response.data)
+                        else
+                            insertNewsIntoDb(response.data)
+                    }
 
-                override fun onFail(response: GenericResponse<*>) {
-                    errorMsg.value = response.message
-                }
-            })
+                    override fun onFail(response: GenericResponse<*>) {
+                        errorMsg.value = response.message
+                    }
+                })
+        }
     }
 
     private fun insertNewsIntoDb(newsList: ArrayList<NewsItemModel>?) {
@@ -53,17 +59,16 @@ class TopHeadingVM : ViewModel() {
         }
     }
 
-    fun getNewsDataFromDb() {
+    private fun getNewsDataFromDb() {
         launch {
             val newsList = TopHeadingRepository.instance.getNewsListFromDb()
-            if (newsList == null || newsList.isEmpty())
-                errorMsg.postValue(NewsApplication.instance.getString(R.string.no_internet))
-            else
+            if (newsList != null && newsList.isNotEmpty())
                 newsData.postValue(newsList)
+            errorMsg.postValue(NewsApplication.instance.getString(R.string.no_internet))
         }
     }
 
-    fun clearNewsDataAndInsert(newsList: ArrayList<NewsItemModel>?) {
+    private fun clearNewsDataAndInsert(newsList: ArrayList<NewsItemModel>?) {
         launch {
             TopHeadingRepository.instance.clearNewsDb()
             TopHeadingRepository.instance.insertNewsListIntoDb(newsList)

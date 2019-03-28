@@ -66,11 +66,7 @@ class TopHeadingActivity : BaseActivity() {
                     adapter?.addData(it)
             }
         })
-        if (isNetworkAvailable)
-            topHeadingVM.topHeadingCallAPI(0)
-        else {
-            topHeadingVM.getNewsDataFromDb()
-        }
+        topHeadingVM.topHeadingCallAPI(0)
         binding.swipeToRefresh.setOnRefreshListener {
             fadeIn(binding.loadingLay.loadingTv)
             topHeadingVM.topHeadingCallAPI(0)
